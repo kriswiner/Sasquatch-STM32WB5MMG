@@ -1,3 +1,5 @@
+Wake-on-motion detection and data logging application
+
 Sasquatch is an ultra-low-power, BLE-enabled development board with an ST LIS2DW12 3-axis accelerometer and 
 a 16-MByte Macronix MX25L12835FZNI QSPI flash. It is ideal for wake-on-motion detection and data logging applications. These include monitoring a door for entry/exit events, monitoring infrequently-moved equipment at a job site, earthquake detection and, more commonly, package state monitoring during shipment.
 
