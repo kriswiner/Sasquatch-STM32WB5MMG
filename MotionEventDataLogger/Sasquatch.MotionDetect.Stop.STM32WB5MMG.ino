@@ -222,8 +222,8 @@ void loop() {
 
     // collect and store the accel data around the wakeup event
     FIFOstatus = LIS2DW12.FIFOsamples();               // get acceleration history prior to and during wakeup event
-    if(1) {                                            // do even if the FIFO threshold is not reached
- //   if(FIFOstatus & 0x80) {                            // if the FIFO threshold is reached
+//    if(1) {                                            // do even if the FIFO threshold is not reached
+    if(FIFOstatus & 0x80) {                            // if the FIFO threshold is reached
       numFIFOSamples =  FIFOstatus & 0x3F;             // should be 32 samples
       for(uint8_t i; i < numFIFOSamples; i++) {        // read the FIFO data
          LIS2DW12.readAccelData(accelCount);           // get 14-bit signed accel data
