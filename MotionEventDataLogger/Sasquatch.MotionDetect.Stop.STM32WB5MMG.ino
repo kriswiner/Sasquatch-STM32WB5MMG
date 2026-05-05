@@ -256,12 +256,7 @@ void loop() {
       }
       
   // Check RTC time 
-  Day = RTC.getDay();
-  Month = RTC.getMonth();
-  Year = RTC.getYear();
-  Seconds = RTC.getSeconds();
-  Minutes = RTC.getMinutes();
-  Hours   = RTC.getHours();     
+  RTC.getDateTime(Day, Month, Year, Hours, Minutes, Seconds);  
   if(SerialDebug) { 
     Serial.println(" ");  Serial.print("RTC: ");
     if(Hours < 10) {Serial.print("0"); Serial.print(Hours);} else Serial.print(Hours);
