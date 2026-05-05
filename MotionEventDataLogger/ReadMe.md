@@ -1,5 +1,4 @@
 ## Wake-on-motion detection and data logging application
-Work in progress....
 
 **[Sasquatch](https://www.tindie.com/products/tleracorp/sasquatch-stm32wb5mmg-development-board/)** is an ultra-low-power, BLE-enabled development board with an [STM32WB5MMG](https://www.st.com/en/microcontrollers-microprocessors/stm32wb5mmg.html) module (STM32WB55) MCU host, an ST LIS2DW12 3-axis accelerometer and a 16-MByte Macronix MX25L12835FZNI QSPI flash memory. It is the minimal setup for practical wake-on-motion detection and data logging applications. These include monitoring a door for entry/exit events, monitoring infrequently-moved equipment at a job site, earthquake detection and, more commonly, package state monitoring during shipment.
 
