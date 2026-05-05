@@ -232,10 +232,10 @@ void loop() {
          ay = (float)accelCount[1]*aRes - offset[1];   // could just store the two raw bytes for each axis
          az = (float)accelCount[2]*aRes - offset[2];   // but here we will scale and store half floats
 
-         //  convert to millis and subtract gravity (store inertial components) to make it easier to plot changes due to motion
+         //  convert to milligs to make it easier to plot changes due to motion
          iax = LIS2DW12.FloattoHalf(1000.0f*ax);       // convert float data to half-float data for efficient storage
          iay = LIS2DW12.FloattoHalf(1000.0f*ay);
-         iaz = LIS2DW12.FloattoHalf(1000.0f*az - 1000.0f);
+         iaz = LIS2DW12.FloattoHalf(1000.0f*az);
 
          // store data in QSPI flash memory
          // First page number is 0
