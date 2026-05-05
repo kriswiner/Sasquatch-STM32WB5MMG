@@ -151,8 +151,8 @@ void setup() {
 
     // collect and store the accel data around the wakeup event
     FIFOstatus = LIS2DW12.FIFOsamples();               // get acceleration history prior to and during wakeup event
-    if(1) {                                            // do even if the FIFO threshold is not reached
-//    if(FIFOstatus & 0x80) {                            // if the FIFO threshold is reached
+//    if(1) {                                            // do even if the FIFO threshold is not reached
+    if(FIFOstatus & 0x80) {                            // if the FIFO threshold is reached
       numFIFOSamples =  FIFOstatus & 0x3F;             // should be 32 sample
       for(uint8_t i; i < numFIFOSamples; i++) {        // read the FIFO data
          LIS2DW12.readAccelData(accelCount);           // get 14-bit signed accel data
@@ -161,10 +161,10 @@ void setup() {
          ay = (float)accelCount[1]*aRes - offset[1];   // could just store the two raw bytes for each axis
          az = (float)accelCount[2]*aRes - offset[2];   // but here we will scale and store half floats
 
-         //  convert to millis and subtract gravity (store inertial components) to make it easier to plot changes due to motion
+         //  convert to milligs to make it easier to plot changes due to motion
          iax = LIS2DW12.FloattoHalf(1000.0f*ax);       // convert float data to half-float data for efficient storage
          iay = LIS2DW12.FloattoHalf(1000.0f*ay);
-         iaz = LIS2DW12.FloattoHalf(1000.0f*az - 1000.0f);
+         iaz = LIS2DW12.FloattoHalf(1000.0f*az);
 
          // store data in QSPI flash memory
          // First page number is 0
@@ -185,14 +185,9 @@ void setup() {
       }
 
  // Check RTC time, RTC kept alive in STANDBT mode
-  if(SerialDebug) {Serial.println("RTC:");}
-  Day = RTC.getDay();
-  Month = RTC.getMonth();
-  Year = RTC.getYear();
-  Seconds = RTC.getSeconds();
-  Minutes = RTC.getMinutes();
-  Hours   = RTC.getHours();     
+  RTC.getDateTime(Day, Month, Year, Hours, Minutes, Seconds); 
   if(SerialDebug) {
+    Serial.println("RTC:");
     if(Hours < 10) {Serial.print("0"); Serial.print(Hours);} else Serial.print(Hours);
     Serial.print(":"); 
     if(Minutes < 10) {Serial.print("0"); Serial.print(Minutes);} else Serial.print(Minutes); 
