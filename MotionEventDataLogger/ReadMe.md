@@ -1,7 +1,7 @@
 ## Wake-on-motion detection and data logging application
 Work in progress....
 
-**Sasquatch** is an ultra-low-power, BLE-enabled development board with an ST STM32WB5MMG (STM32WB55) MCU host, an ST LIS2DW12 3-axis accelerometer and a 16-MByte Macronix MX25L12835FZNI QSPI flash memory. It is the minimal setup for practical wake-on-motion detection and data logging applications. These include monitoring a door for entry/exit events, monitoring infrequently-moved equipment at a job site, earthquake detection and, more commonly, package state monitoring during shipment.
+**Sasquatch** is an ultra-low-power, BLE-enabled development board with an STM32WB5MMG module (STM32WB55) MCU host, an ST LIS2DW12 3-axis accelerometer and a 16-MByte Macronix MX25L12835FZNI QSPI flash memory. It is the minimal setup for practical wake-on-motion detection and data logging applications. These include monitoring a door for entry/exit events, monitoring infrequently-moved equipment at a job site, earthquake detection and, more commonly, package state monitoring during shipment.
 
 In the latter case, purchasers of high-value products (and their insurance companies) want to know if their package in transit has 
 seen extreme of temperature, has been dropped or tipped over during handling, or generally suffered an event resulting in damage. The data desired includes a record of the package temperature, the inertial forces acting on the package during the event, and a time/date stamp. Sasquatch can provide these data (and other data if additional sensors are added), and this is a minimally useful data set to offer a practical, battery-powered application that can cover a year or longer monitoring time.
