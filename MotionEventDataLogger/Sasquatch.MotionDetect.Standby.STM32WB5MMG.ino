@@ -22,7 +22,7 @@ bool SerialDebug = true;
 // QSPI flash variable
 uint8_t  mid;
 uint16_t did;
-uint16_t page_number = 0;     // set the page mumber for flash page write
+uint16_t page_number = 0;     // set the page number for flash page write
 // create a pointer to the page_number variabe to maintain value during STANDBY for use after wakeup
 //uint16_t _SECTION_BBRAM_DATA page_number = 0; // stored in flash
 uint8_t  flashPage[256];      // array to hold the data for flash page write
