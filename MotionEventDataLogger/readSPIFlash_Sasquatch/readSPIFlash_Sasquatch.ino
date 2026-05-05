@@ -72,14 +72,14 @@ void setup(void)
       iay = uint16_t ( (uint16_t)flashPage[6*i + 2] << 8 | flashPage[6*i + 3]);
       iaz = uint16_t ( (uint16_t)flashPage[6*i + 4] << 8 | flashPage[6*i + 5]);
 
-//      ax = HalftoFloat(iax); if(ax > 2.0f) ax = 0.0f;
-//      ay = HalftoFloat(iay); if(ay > 2.0f) ay = 0.0f;
-//      az = HalftoFloat(iaz); if(az > 2.0f) az = 0.0f;
+      ax = HalftoFloat(iax);  
+      ay = HalftoFloat(iay);  
+      az = HalftoFloat(iaz); 
 
-      Serial.print(i); Serial.print(",");   // should be inertial acceleration in milligs
-      Serial.print(ax, 1); Serial.print(","); 
-      Serial.print(ay, 1); Serial.print(","); 
-      Serial.println(az, 1);
+      Serial.print(i); Serial.print(",");   // should be acceleration in milligs
+      Serial.print((int)ax); Serial.print(","); 
+      Serial.print((int)ay); Serial.print(","); 
+      Serial.println(int)az);  // can subtract 1000 here to remove gravity
     }    
   }
 
