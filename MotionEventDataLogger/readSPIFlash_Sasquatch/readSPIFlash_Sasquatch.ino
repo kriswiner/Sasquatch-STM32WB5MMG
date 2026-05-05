@@ -67,19 +67,21 @@ void setup(void)
 
     Serial.print(Temperature, 2); Serial.print(","); Serial.println(VBAT, 2);  
 
-    for( uint8_t i = 0; i < 32; i++) { // maximum 32 entries in FIFO per wake event
+  // In the LIS2DW12 accelerometer's FIFO mode, the oldest data is at the beginning of the FIFO buffer
+  // and the newest data is added at the end.
+  for(uint8_t i = 31; i > 0; i--) { // maximum 32 entries in FIFO per wake event
       iax = uint16_t ( (uint16_t)flashPage[6*i + 0] << 8 | flashPage[6*i + 1]); // reconstruct accel data
       iay = uint16_t ( (uint16_t)flashPage[6*i + 2] << 8 | flashPage[6*i + 3]);
       iaz = uint16_t ( (uint16_t)flashPage[6*i + 4] << 8 | flashPage[6*i + 5]);
 
-      ax = HalftoFloat(iax);  
+      ax = HalftoFloat(iax);   
       ay = HalftoFloat(iay);  
-      az = HalftoFloat(iaz); 
+      az = HalftoFloat(iaz);  
 
-      Serial.print(i); Serial.print(",");   // should be acceleration in milligs
-      Serial.print((int)ax); Serial.print(","); 
+      Serial.print(32 - i); Serial.print(",");   // should be acceleration in milligs
+      Serial.print((int)ax); Serial.print(",");  // 12-bit data resolution is ~1 millig
       Serial.print((int)ay); Serial.print(","); 
-      Serial.println(int)az);  // can subtract 1000 here to remove gravity
+      Serial.println((int)az); // can subtract 1000 here to remove gravity
     }    
   }
 
