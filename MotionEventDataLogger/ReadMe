@@ -1,1 +1,6 @@
-Description of two sketches to log data from the LIS2DW12 accel on motion detection events
+Sasquatch is an ultra-low-power, BLE-enabled development board with an ST LIS2DW12 3-axis accelerometer and 
+a 16 MByte Macronix MX25L12835FZNI QSPI flash. In other words, it is ideal for wake-on-motion detection and data logging applications. These include monitoring 
+a door for entry/exit events, monitoring infrequently-moved equipment at a job site, earthquake detection and, more commonly, package state monitoring during shipment.
+
+In the latter case, purchasers of high-value products (and their insurance companies) are keenly interested to know if their package in transit has 
+seen extreme excusions of temperature, has been dropped or tipped over during handling, or generally suffered an event resulting in damage.
