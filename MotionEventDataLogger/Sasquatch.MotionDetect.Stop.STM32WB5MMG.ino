@@ -19,7 +19,7 @@ bool SerialDebug = true;
 // QSPI flash variable
 uint8_t  mid;
 uint16_t did;
-uint16_t page_number = 0;     // set the page mumber for flash page write
+uint16_t page_number = 0;     // set the page number for flash page write
 uint8_t  flashPage[256];      // array to hold the data for flash page write
 uint32_t block_address, start, end;
 
