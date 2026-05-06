@@ -207,13 +207,15 @@ void loop() {
    LIS2DW12_status = LIS2DW12.getStatus(); // check whether interrupt event is wakeup or sleep
 
    wakeSource = LIS2DW12.getWakeSource();
-   if(wakeSource & 0x20) Serial.println("Free fall detected!");
-   if(wakeSource & 0x10) Serial.println("Sleep event detected!");
-   if(wakeSource & 0x08) Serial.println("Wake-up event detected!");
-   if(wakeSource & 0x04) Serial.println("Wake-up on x-axis detected!");
-   if(wakeSource & 0x02) Serial.println("Wake-up on y-axis detected!");
-   if(wakeSource & 0x01) Serial.println("Wake-up on z-axis detected!");
-
+   if(SerialDebug) {
+    if(wakeSource & 0x20) Serial.println("Free fall detected!");
+    if(wakeSource & 0x10) Serial.println("Sleep event detected!");
+    if(wakeSource & 0x08) Serial.println("Wake-up event detected!");
+    if(wakeSource & 0x04) Serial.println("Wake-up on x-axis detected!");
+    if(wakeSource & 0x02) Serial.println("Wake-up on y-axis detected!");
+    if(wakeSource & 0x01) Serial.println("Wake-up on z-axis detected!");
+   }
+    
    // if wake event
    if(LIS2DW12_status & 0x40) {
    LIS2DW12.deactivateNoMotionInterrupt(); // only want the first detection of the crossing of the motion threshold
