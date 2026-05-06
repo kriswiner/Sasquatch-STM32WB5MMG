@@ -26,6 +26,7 @@ uint8_t LIS2DW12::getChipID()
   return c;
 }
 
+
 uint8_t LIS2DW12::getStatus()
 {
   uint8_t c = _i2c_bus->readByte(LIS2DW12_ADDRESS, LIS2DW12_STATUS);
