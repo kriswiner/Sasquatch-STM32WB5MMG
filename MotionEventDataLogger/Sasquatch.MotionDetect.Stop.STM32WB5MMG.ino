@@ -339,7 +339,7 @@ void loop() {
     ledBlink(yellow, 1); 
   }
   
-  STM32WB.stop();  // wait in an ultra-low power state until an interupt occurs
+  STM32WB.stop();  // wait in an ultra-low power state until an interrupt occurs
 } /* end of main loop */
 
 
