@@ -22,9 +22,9 @@ bool SerialDebug = false;
 // QSPI flash variable
 uint8_t  mid;
 uint16_t did;
-uint16_t page_number = 0;     // set the page number for flash page write
+// uint16_t page_number = 0;     // set the page number for flash page write
 // create a pointer to the page_number variabe to maintain value during STANDBY for use after wakeup
-//uint16_t _SECTION_BBRAM_DATA page_number = 0; // stored in flash
+uint16_t __SECTION_BBRAM_DATA page_number = 0; // stored in flash
 uint8_t  flashPage[256];      // array to hold the data for flash page write
 uint32_t block_address, start, end;
 
@@ -149,18 +149,6 @@ void setup() {
    if(LIS2DW12_status & 0x40) {       // is this a wakeup event?
    LIS2DW12.deactivateNoMotionInterrupt(); // only want the first  detection of the crossing of the motion threshold
    if(SerialDebug) Serial.println("** LIS2DW12 is awake! **");
-
-   // find next writable flash page
-   SFLASH.begin();
-   page_number = 0;
-   SFLASH.read(page_number * 256, flashPage, sizeof(flashPage));
-   while(flashPage[255] == 0x73) { // if page already programmed, go to next page
-       page_number++;
-       SFLASH.read(page_number * 256, flashPage, sizeof(flashPage));
-    }
-    while (SFLASH.busy()) { }
-    SFLASH.end();
-    if(SerialDebug) {Serial.print("Found next writable flash page = "); Serial.println(page_number);}
  
     // collect and store the accel data around the wakeup event
     FIFOstatus = LIS2DW12.FIFOsamples();               // get acceleration history prior to and during wakeup event
@@ -400,7 +388,7 @@ void setup() {
     LIS2DW12.getStatus();                        // read status of interrupt to clear
 //  LIS2DW12.powerDown();
 
-  STM32WB.standby(LIS2DW12_intPin, RISING, 60000); // stay in STANDBY mode until timeout (1 min) occurs or wakeup pin goes HIGH  
+  STM32WB.standby(LIS2DW12_intPin, RISING, 60); // stay in STANDBY mode until timeout (1 min) occurs or wakeup pin goes HIGH  
 
 } /* End of Setup */
 
