@@ -1,4 +1,4 @@
- Robust Sasquatch low-power motion-event logger.
+ **Robust Sasquatch low-power motion-event logger.**
 
   This application uses the LIS2DW12 accelerometer to watch for motion while the
   STM32WB5MMG remains in its lowest-power STANDBY mode. A motion threshold event
