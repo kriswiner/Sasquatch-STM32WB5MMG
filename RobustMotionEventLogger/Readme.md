@@ -20,7 +20,8 @@
   Startup is treated as an operator-supervised commissioning test. The sketch
   verifies sensor communication, reset, self-test limits, offset calibration,
   motion and FIFO configuration, and flash availability before deployment;
-  a fatal sensor initialization failure produces a continuous 1 Hz red indication.
+  a fatal sensor initialization failure produces a continuous 1 Hz red indication. 
+  A fatal QSPI flash initialization triggers a red led indication of two flashes per second.
   During normal operation, I2C, FIFO, sensor, and flash results are checked before
   data is committed. Incomplete motion events are discarded, flash failures stop
   further writes to protect existing records, and transient runtime sensor faults
