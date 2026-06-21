@@ -171,7 +171,7 @@ FS       fs     = LIS2DW12_FS_2G;          // choices are 2, 4, 8, or 16 g
 BW_FILT  bw     = LIS2DW12_BW_FILT_ODR4;   // choices are ODR divided by 2, 4, 10, or 20
 FIFOMODE fifoMode = CONT_TO_FIFO;          // capture 32 samples of data before wakeup event, about 2.5 secs at 12.5 Hz, 20 sec at 1.6 Hz
 bool lowNoise = false;                     // low noise or lowest power
-// when in stationary more, sample rate odr is constant in wake and sleep states,
+// when in stationary mode, sample rate odr is constant in wake and sleep states,
 // when not in stationary mode, sample rate is 12.5 Hz in sleep state and whatever odr is set in wake state
 bool stMode = false;                       // lowest power usage when in stationary mode and odr is set to 1.6 Hz
                       
