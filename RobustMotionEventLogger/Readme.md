@@ -28,13 +28,18 @@
   trigger a lightweight reconfiguration with low-power retries after timed wakes.
 
   Record format version 2:
+  
      bytes   0-191  32 XYZ samples, three half-floats per sample
+     
      bytes 192-220  version, sample count, page, event/configuration, RTC, system, UID
+     
      bytes 221-252  reserved for future metadata
+     
      bytes 253-254  CRC-16 over bytes 0-252
+     
      byte        255 record marker
 
-There is the main applications sketch as well as two helper sketches: one to completely erase the flash before starting a logging application (takes !70 seconds) and one to read all of the flash pages that have been written and output to the serial monitor in CSV format.
+There is the main applications sketch as well as two helper sketches: one to completely erase the flash before starting a logging application (takes ~70 seconds) and one to read all of the flash pages that have been written and output to the serial monitor in CSV format.
 
 Recommend that the flash erase sketch is run before first use of the data logging application to reset flash and put flash into a known initial state. Thereafter, data may be logged until the flash is full.
 
