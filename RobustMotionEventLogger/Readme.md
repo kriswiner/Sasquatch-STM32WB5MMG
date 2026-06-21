@@ -37,7 +37,7 @@
      
      bytes 253-254  CRC-16 over bytes 0-252
      
-     byte        255 record marker
+     byte      255  record marker
 
 There is the main applications sketch as well as two helper sketches: one to completely erase the flash before starting a logging application (takes ~70 seconds) and one to read all of the flash pages that have been written and output to the serial monitor in CSV format.
 
