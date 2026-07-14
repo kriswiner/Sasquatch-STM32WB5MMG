@@ -42,18 +42,16 @@ For untethered logging, use `SERIAL_DEBUG = false` and `WAIT_FOR_SERIAL = false`
 
 Some typical output (excerpted):
 
-BLE discovery analysis
-----------------------
-Intervals analyzed: 38
+>Intervals analyzed: 38
 Unique addresses:   28
 Average devices:    3.5
 Peak devices:       15
 
-Ten-minute rollups
+>Ten-minute rollups
 start_time,intervals,avg_active,peak_active,strong_obs,medium_obs,weak_obs,apple_obs,st_obs,google_obs,named_obs,public_obs,random_static_obs
 12:53:49,38,3.5,15,6,0,127,41,0,0,36,37,96
 
-Manufacturer summary
+>Manufacturer summary
 Apple:        12
 ST:           0
 Google:       0
@@ -63,7 +61,7 @@ TI:           0
 Other known:  8
 Unknown:      6
 
-Persistence summary
+>Persistence summary
 Persistent >=80%: 0
 Occasional 20-80%: 1
 Transient <20%: 27
