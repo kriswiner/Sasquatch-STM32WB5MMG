@@ -40,6 +40,34 @@ const bool VERBOSE_OUTPUT = false;
 
 For untethered logging, use `SERIAL_DEBUG = false` and `WAIT_FOR_SERIAL = false`. For bench testing with the Arduino Serial Monitor, use `SERIAL_DEBUG = true`. If `PRINT_LIVE_SUMMARY` is enabled, the sketch prints a compact summary every 10 seconds showing active devices, RSSI, best RSSI, seen count, address type, `C/A/R` flags, identity hints, battery voltage, and MCU temperature. `VERBOSE_OUTPUT` can be enabled for detailed per-packet advertisement decoding, but it is normally too much output for field use.
 
+Some typical output (excerpted):
+
+BLE discovery analysis
+----------------------
+Intervals analyzed: 38
+Unique addresses:   28
+Average devices:    3.5
+Peak devices:       15
+
+Ten-minute rollups
+start_time,intervals,avg_active,peak_active,strong_obs,medium_obs,weak_obs,apple_obs,st_obs,google_obs,named_obs,public_obs,random_static_obs
+12:53:49,38,3.5,15,6,0,127,41,0,0,36,37,96
+
+Manufacturer summary
+Apple:        12
+ST:           0
+Google:       0
+Microsoft:    2
+Nordic:       0
+TI:           0
+Other known:  8
+Unknown:      6
+
+Persistence summary
+Persistent >=80%: 0
+Occasional 20-80%: 1
+Transient <20%: 27
+
 ## LED Indication
 
 The Sasquatch RGB LED is used as the basic field indication system. The LED is active-low on this board.
