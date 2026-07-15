@@ -107,6 +107,11 @@ Raw rows show each logged device record with batch number, address, type, flags,
 
 The current dump sketch reads the append-only log successfully across resets, but long logs with multiple startup session pages should be interpreted with care until the reader is made fully session-aware. Multiple session pages are useful because they reveal resets or power interruptions, but later session pages can complicate timestamp reconstruction in the current analysis output.
 
+Typical output:
+
+<img width="1080" height="851" alt="Output1" src="https://github.com/user-attachments/assets/0d066b6d-c301-4aa2-b92a-11348ce8eff3" />
+<img width="1076" height="710" alt="Output2" src="https://github.com/user-attachments/assets/95c55624-1e92-4eee-b507-04d4a8309157" />
+
 ## Suggested Field Workflow
 
 1. Erase QSPI flash.
