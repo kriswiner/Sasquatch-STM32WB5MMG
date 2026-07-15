@@ -12,6 +12,11 @@
     - smooths RSSI so proximity estimates are less jumpy
     - prints a compact summary at a fixed interval
 
+  Logging model:
+    - BLE reports update the in-RAM discovery table whenever they arrive
+    - the summary timer periodically snapshots the table to QSPI flash
+    - the flash log is an interval summary, not a raw packet capture
+
   Verbose mode:
     - also prints the detailed decoded advertising report for every packet
 
