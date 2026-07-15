@@ -42,6 +42,11 @@ const bool VERBOSE_OUTPUT = false;              // Set true for full decoded pac
 
 For untethered logging, use `SERIAL_DEBUG = false`; the sketch does not wait for USB Serial before starting. For bench testing with the Arduino Serial Monitor, use `SERIAL_DEBUG = true`. If `PRINT_LIVE_SUMMARY` is enabled, the sketch prints a compact summary every 10 seconds showing active devices, RSSI, best RSSI, seen count, address type, `C/A/R` flags, identity hints, battery voltage, and MCU temperature. `VERBOSE_OUTPUT` can be enabled for detailed per-packet advertisement decoding, but it is normally too much output for field use.
 
+Typical output:
+
+<img width="1080" height="851" alt="Output1" src="https://github.com/user-attachments/assets/0d066b6d-c301-4aa2-b92a-11348ce8eff3" />
+<img width="1076" height="710" alt="Output2" src="https://github.com/user-attachments/assets/95c55624-1e92-4eee-b507-04d4a8309157" />
+
 ## LED Indication
 
 The Sasquatch RGB LED is used as the basic field indication system. The LED is active-low on this board.
