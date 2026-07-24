@@ -1,3 +1,5 @@
+<img width="1200" height="820" alt="AS7331_unobstructed_run" src="https://github.com/user-attachments/assets/f6a6f3cb-3eaf-4a1c-8428-d60d80e37b61" />
+<img width="1200" height="820" alt="AS7331_unobstructed_run" src="https://github.com/user-attachments/assets/499eba2f-8e97-4511-beec-a505e90f836d" />
 # AS7331 Sasquatch Breadboard Logger
 
 This repository contains a robust, ultra-low-power AS7331 UVA/UVB/UVC demonstration for the Tlera Sasquatch STM32WB5MMG board. The sensor is connected to the external `Wire` I2C bus, with its push-pull READY output connected to GPIO 8. Measurements use AS7331 command mode with gain 8 and integration-time setting 6. Interrupt and timer callbacks only set flags and wake the MCU; the main loop services the resulting state machines and otherwise enters `STM32WB.stop()`. Measured STOP current was approximately 5–6 µA.
