@@ -25,7 +25,7 @@
 
 #define I2C_BUS Wire
 
-constexpr bool SERIAL_DEBUG = false;
+constexpr bool SERIAL_DEBUG = true;
 // Enable the per-entry FIFO dump and PRESS_OUT comparison while investigating
 // FIFO behavior. This has no effect unless SERIAL_DEBUG is also true.
 constexpr bool ENABLE_DIAGNOSTICS = false;
