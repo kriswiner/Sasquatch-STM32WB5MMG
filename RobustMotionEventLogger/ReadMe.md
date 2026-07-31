@@ -34,9 +34,15 @@ Record format version 2:
     bytes 253-254  CRC-16 over bytes 0-252
     byte      255  completed-record marker
 
-The next flash page number is retained in backup SRAM so an ordinary STOP wake does not require an energy-consuming scan. If that retained state is missing or invalid after a reset or battery interruption, a bounded binary search locates the first erased page and resumes appending without erasing earlier records. The retained page and fault state use complementary values and a validity marker to detect interrupted updates. Existing version 1 records remain recognizable while version 2 records add the valid-sample count and current integrity checks.
+The next flash page number is retained in backup SRAM so an ordinary STOP wake does not require an energy-consuming scan. If that retained state is missing or invalid after a reset or battery interruption, a bounded binary search locates the first erased page and resumes appending without erasing earlier records. The retained page and fault state use complementary values and a validity marker to detect interrupted updates. 
 
 The repository also includes helper sketches to erase the complete flash before commissioning and to read written pages to the serial monitor in CSV form. Erasing the flash before first use puts it into a known state; thereafter, records can be appended until the available event-page region is full.
+
+Typical results:
+<img width="851" height="607" alt="Capture" src="https://github.com/user-attachments/assets/984be349-5ff9-4acc-9806-c27b7a989ff1" />
+
+_Data from a single motion event captured on flash and transferred to a spreadsheet for plotting._
+
 
 ### Configuration and measured power
 
