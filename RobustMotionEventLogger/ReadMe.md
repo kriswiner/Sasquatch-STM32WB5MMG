@@ -41,7 +41,7 @@ The repository also includes helper sketches to erase the complete flash before 
 Typical results:
 <img width="851" height="607" alt="Capture" src="https://github.com/user-attachments/assets/984be349-5ff9-4acc-9806-c27b7a989ff1" />
 
-_Data from a single motion event captured on flash and transferred to a spreadsheet for plotting._
+_30 trusted samples beginning ~100 ms after threshold detection (first FIFO sample is discarded per ST' LISDW12 data sheet). Data from the single motion event captured on flash and transferred to a spreadsheet for plotting._
 
 
 ### Configuration and measured power
