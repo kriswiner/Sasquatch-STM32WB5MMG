@@ -16,8 +16,6 @@ This interrupt-driven sequence deliberately favors a simple and repeatable event
 
 The wake-on-motion interrupt is disabled for the duration of an event so that a single physical movement cannot create multiple records. After the FIFO has been read, the sensor waits for its sleep-on-no-motion condition. The FIFO is returned to BYPASS mode and motion detection is then rearmed for the next event.
 
-The present robust STANDBY sketch still needs to be converted to this same post-trigger FIFO sequence and retested. Until that work is complete, the robust STOP sketch is the validated reference implementation.
-
 ### Robust operation and flash logging
 
 Startup is treated as an operator-supervised commissioning test. The sketch verifies I2C communication, the LIS2DW12 identity and reset, self-test limits, offset calibration, motion and FIFO configuration, and QSPI flash availability before deployment. Fatal initialization failures produce a persistent red LED indication. During operation, I2C, FIFO, sensor, and flash results are checked before an event is committed. Incomplete motion events are discarded, flash failures stop further writes to protect existing data, and transient sensor faults trigger lightweight reconfiguration attempts on timed wakes.
