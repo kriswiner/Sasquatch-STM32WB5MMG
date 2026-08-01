@@ -22,7 +22,7 @@ Startup is treated as an operator-supervised commissioning test. The sketch veri
 
 Each valid motion event occupies one 256-byte QSPI flash page. The 30 XYZ samples are converted to milligravity units and stored as three 16-bit half-floats per sample. The record also includes the number of valid samples, format version, physical flash page, initiating wake-source bits, accelerometer range and data rate, RTC time and date, battery voltage, MCU temperature, and the 96-bit MCU unique identifier. Unused bytes remain reserved for future metadata, including barometric motion information. A CRC-16 protects bytes 0 through 252 and a final completion marker distinguishes a fully written record from an erased, partial, or corrupted page.
 
-Record format version 2:
+Record format:
 
     bytes   0-179  30 trusted XYZ samples, three half-floats per sample
     bytes 180-191  unused sample space, left erased
