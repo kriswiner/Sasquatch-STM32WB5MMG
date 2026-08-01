@@ -44,7 +44,7 @@ _30 trusted samples beginning approximately 100 ms after threshold detection. Th
 
 ### Configuration and measured power
 
-The current STOP reference uses a +/-2 g full-scale range, 12.5 Hz output data rate, low-power mode 1, and a motion threshold of approximately 62.5 mg. This gives roughly 1 mg resolution and is well suited to human-scale handling motion. More demanding impacts can be captured by increasing the full-scale range, output data rate, or performance mode at the cost of resolution, capture duration, or power.
+The current reference sketches use a +/-2 g full-scale range, 12.5 Hz output data rate, low-power mode 1, and a motion threshold of approximately 62.5 mg. This gives roughly 1 mg resolution and is well suited to human-scale handling motion. More demanding impacts can be captured by increasing the full-scale range, output data rate, or performance mode at the cost of resolution, capture duration, or power.
 
 With the corrected duty-cycled FIFO sequence, measured STOP current was approximately 6.2 uA. In a repeatable ten-minute test containing one RTC alarm per minute and five motion events, average current was approximately 8.1 uA, or about 0.38 uA of current per handled event above the measured STOP baseline. 
 
