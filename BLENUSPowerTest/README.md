@@ -1,0 +1,5 @@
+# BLENUS.PowerTest.Sasquatch.STM32WB5MMG
+
+This sketch is a low-power BLE UART/NUS test for the Tlera Corp Sasquatch STM32WB5MMG development board. It demonstrates an on-demand reporting pattern intended for ultra-low-power environmental loggers: the device advertises briefly once per minute, accepts a short BLE UART connection window, and returns to STM32WB STOP mode when no connection is active. Once connected from an iPhone BLE UART/NUS monitor, send `?`, `r`, or `R` to request a simple report containing the STM32WB internal temperature and battery voltage.
+
+The important design point is that BLE is not left advertising continuously. In testing, a 5-second advertising window once per minute was easy to connect to from an iPhone and added only about 16 µA above the bare STOP-mode baseline when no connections were made. When connected, the sketch services BLE UART in short timed STOP slices so query responses remain prompt while preserving low-power behavior. This same pattern is intended for integration into the Sasquatch Daughter environmental logger and related BLE discovery/logger sketches.
