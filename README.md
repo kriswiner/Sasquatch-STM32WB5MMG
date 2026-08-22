@@ -5,7 +5,7 @@ Some test sketches to demonstrate how to make use of the Sasquatch development b
 
 **Sasquatch is:**
 
---64 MHz Cortex M4 MCU with 1 MB flash and 256 KB SRAM for application firmware, 30 GPIOs exposed to the user;
+--64 MHz Cortex M4F MCU with 1 MB flash and 256 KB SRAM for application firmware, 30 GPIOs exposed to the user;
 
 --Robust, power-and memory-efficient Arduino core written from scratch properly handling all errata with no gaps;
 
