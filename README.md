@@ -15,9 +15,9 @@ Some test sketches to demonstrate how to make use of the Sasquatch development b
 
 --On-board 16 MB QSPI NOR flash, 3-axis accelerometer, rgb led, battery voltage monitor;
 
---Small (20.5 mm x 50.8 mm), ultra-low-power (~2.1 uA sleep) development platform for breadboarding and prototyping.
+--Small (20.5 mm x 50.8 mm), ultra-low-power (~2.1 uA CM4F sleep) development platform for breadboarding and prototyping.
 
-Initial testing with the above sketch shows that the STOP mode current is ~4.85 uA when the LIS2DW12 accel is always on for wake-on-motion/sleep-on-no-motion functionality.
+Initial testing with the above sketch shows that the STOP mode current is ~4.5 uA when the LIS2DW12 accel is always on for wake-on-motion/sleep-on-no-motion functionality.
 
 <img width="1716" height="936" alt="image" src="https://github.com/user-attachments/assets/40c52be3-0bfc-4a3a-8174-a90733af7254" />
 
