@@ -4,9 +4,9 @@ Arduino sketch to read PDM data from the ICS41350 PDM microphone and use in-line
 
 Typical output:
 
-Frequency_Hz	Amplitude
-RMS	60.12
-125.0	450.0
+>Frequency_Hz	Amplitude
+>RMS	60.12
+>125.0	450.0
 343.8	1070.8
 562.5	2367.6
 781.2	3058.4
