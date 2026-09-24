@@ -40,6 +40,6 @@ Typical output:
 6906.3	9.5
 Peak_Hz	781.2
 
-ICS41350 breakout board design is available on OSHPark(https://oshpark.com/shared_projects/N40xu0vJ).
+ICS41350 breakout board design is available on [OSHPark](https://oshpark.com/shared_projects/N40xu0vJ).
 ----
 
