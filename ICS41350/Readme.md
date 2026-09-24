@@ -1,5 +1,7 @@
 Arduino sketch to read PDM data from the ICS41350 PDM microphone and use in-line FFT analysis to print amplitude in 16 frequency bands between 0 and 16 kHz on the serial monitor every 2 seconds.
 
+Connect Sasquatch PDM CLK to ICS41350 CLK, Sasquatch PDM DAT to ICS41350 DATA, ICS41350 SELECT (L/R) to GND for DAT1 (or 3V0 for DAT2, and 3V0 and GND from Sasquatch to the ICS41350 breakout board.
+
 <img width="2137" height="1424" alt="IMG_1098" src="https://github.com/user-attachments/assets/9ac1aca2-07bf-4188-bebb-6895dd686765" />
 
 *Typical output:*
