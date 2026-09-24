@@ -1,5 +1,5 @@
 #include <PDM.h>
- 
+
 #define ARM_MATH_CM4
 #include <arm_math.h>
 
@@ -103,9 +103,16 @@ void runAndPrintFFT()
     float32_t peakAmp = 0.0f;
     float32_t peakFreq = 0.0f;
 
+    const int firstBin = 1;       // Skip DC.
+    const int lastBin = FFT_N / 2; // Include bins up to Nyquist.
+
     for (int b = 0; b < NUM_BANDS; b++) {
-        int startBin = 1 + b * ((FFT_N / 2 - 1) / NUM_BANDS);
-        int endBin   = 1 + (b + 1) * ((FFT_N / 2 - 1) / NUM_BANDS);
+        int startBin = firstBin + ((lastBin - firstBin) * b) / NUM_BANDS;
+        int endBin   = firstBin + ((lastBin - firstBin) * (b + 1)) / NUM_BANDS;
+
+        if (endBin <= startBin) {
+            endBin = startBin + 1;
+        }
 
         float32_t sum = 0.0f;
 
@@ -129,4 +136,4 @@ void runAndPrintFFT()
     Serial.print("Peak_Hz\t");
     Serial.println(peakFreq, 1);
     Serial.println("----");
-}
+}    
