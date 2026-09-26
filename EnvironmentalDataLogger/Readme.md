@@ -18,7 +18,30 @@ The logger treats the sensors as a set of low-duty-cycle measurement devices rat
 
 The QSPI log uses fixed 256-byte pages with a 32-byte page header and four 56-byte records per page. Each record is a compact, timestamped environmental snapshot containing: temperature, humidity, pressure, gas readings, RGB/IR/lux, battery voltage, AEM charging telemetry, acceleration, AEM policy state, and one quality byte. Records are appended to the last written record so the logger can be interrupted, if necessary, or multiple sessions can be recorded without losing data. At a once-per-minute data logging cadence, the 16 MByte QSPI flash can hold ~180 days worth of environmental data. At once-per-five minute cadence, which matches the lowest-power rate of the ENS161 gas sensor and is adequate for slowly varying environmental conditions, this duration can be extended out to years. A helper sketch reads the flash after an experiment concludes, translates the logged data into proper units, and outputs the data in CSV format for easy import into a spreadsheet for display and analysis.
 
-To be added  
+Sasquatch Daughter QSPI CSV dump  
+# quality_bits: bit0=primary_env_partial, bit1=ens_not_valid, bit2=battery_invalid, bit3=aem_unavailable, bit4=i2c_warning, bit5=flash_warning, bit6=reserved, bit7=reserved  
+sequence,timestamp_utc,quality,hdc_temp_c,humidity_pct,pressure_hpa,lps_temp_c,ens_aqi,tvoc_ppb,eco2_ppm,red,green,blue,ir,ambient_lux,battery_v,vsto_v,aem_temp_c,aem_apm_src1_k,accel_x_g,accel_y_g,accel_z_g,aem_policy  
+0,09/26/2026 18:03:00,0x02,22.25,58.11,977.683,22.65,0,0,0,4,7,3,5,15.12,3.992,0.000,0.0,0,0.6507,-0.1352,-0.7261,5  
+1,09/26/2026 18:04:00,0x02,21.66,56.83,977.662,22.20,0,0,400,2,4,2,1,8.64,3.973,0.000,0.0,0,0.6703,-0.2006,-0.7549,5  
+2,09/26/2026 18:05:00,0x0A,21.12,59.69,977.953,21.64,0,0,400,149,254,161,385,548.64,3.973,0.000,0.0,0,0.5029,-0.9926,-0.0576,1  
+3,09/26/2026 18:06:00,0x0A,20.37,61.49,978.421,20.99,0,0,400,177,323,263,185,697.68,3.975,0.000,0.0,0,-0.0256,-1.0831,0.1032,2  
+4,09/26/2026 18:07:00,0x02,19.90,63.09,978.500,20.50,0,0,400,99,182,129,215,393.12,3.968,4.068,20.8,3648,0.0966,0.1789,-0.9543,3  
+5,09/26/2026 18:08:00,0x02,19.86,63.43,978.486,20.38,0,0,400,98,179,127,213,386.64,3.966,4.068,20.8,3933,0.1088,0.1835,-0.9540,3  
+6,09/26/2026 18:09:00,0x02,19.82,63.45,978.480,20.30,1,0,400,97,178,126,213,384.48,3.966,4.012,20.4,3667,0.1147,0.1896,-0.9536,3  
+7,09/26/2026 18:10:00,0x02,19.53,64.87,978.464,20.08,1,0,400,97,177,126,213,382.32,3.975,4.068,20.4,3665,0.1218,0.1947,-0.9465,3  
+8,09/26/2026 18:11:00,0x02,19.19,64.90,978.433,19.88,1,0,400,97,177,125,214,382.32,3.973,4.050,20.4,3932,0.1286,0.1984,-0.9487,3  
+9,09/26/2026 18:12:00,0x02,19.29,66.54,978.407,19.85,1,0,400,98,177,125,215,382.32,3.964,4.031,19.9,3933,0.1286,0.1957,-0.9453,3  
+10,09/26/2026 18:13:00,0x02,19.42,65.48,978.394,19.92,1,0,400,98,177,125,215,382.32,3.957,4.050,20.4,3964,0.1413,0.2047,-0.9389,3  
+11,09/26/2026 18:14:00,0x02,19.53,64.85,978.410,20.02,1,0,400,98,178,125,214,384.48,3.966,4.050,19.9,4001,0.1427,0.2069,-0.9416,3  
+12,09/26/2026 18:15:00,0x02,19.51,64.98,978.385,20.03,1,0,400,96,176,124,214,380.16,3.966,4.068,20.4,3976,0.1493,0.2037,-0.9379,3  
+13,09/26/2026 18:16:00,0x02,19.47,65.43,978.389,19.98,1,0,400,97,177,124,216,382.32,3.966,4.068,20.4,3953,0.1510,0.2142,-0.9345,3  
+14,09/26/2026 18:17:00,0x02,19.38,64.59,978.391,19.89,1,0,400,98,177,124,216,382.32,3.966,4.050,19.9,3939,0.1535,0.2123,-0.9409,3  
+15,09/26/2026 18:18:00,0x02,19.30,65.42,978.419,19.82,1,0,400,97,177,124,215,382.32,3.964,4.068,19.9,3966,0.1635,0.2057,-0.9421,3  
+16,09/26/2026 18:19:00,0x02,19.23,64.99,978.408,19.75,1,0,400,97,176,124,216,380.16,3.964,4.031,19.9,3940,0.1713,0.2159,-0.9289,3  
+17,09/26/2026 18:20:00,0x02,19.18,66.20,978.427,19.75,1,0,400,97,177,122,216,382.32,3.968,4.050,19.9,3939,0.1774,0.2191,-0.9287,3  
+18,09/26/2026 18:21:00,0x02,19.17,65.14,978.422,19.75,1,0,400,98,177,122,218,382.32,3.968,4.068,19.9,3938,0.1874,0.2333,-0.9235,3  
+19,09/26/2026 18:22:01,0x02,19.22,66.30,978.434,19.80,1,0,400,97,175,120,217,378.00,3.966,4.068,19.9,3939,0.2142,0.2440,-0.9179,3  
+
 *Typical QSPI logging data in CSV format from the serial monitor output*
 
 The AEM13921 energy harvester is managed as an explicitly controlled charging subsystem rather than being left continuously active. The firmware normally holds the AEM in its lowest-power disabled/ship state and wakes it only when the battery voltage is below the selected charging threshold and the light sensor indicates useful illumination. After enabling the AEM, the firmware configures it over I2C, monitors the SRC1 available-power measurement and storage voltage, and keeps harvesting active only when the source appears strong enough to provide useful charge. If the battery reaches the upper voltage limit, illumination is too weak, or harvesting does not appear productive after a short evaluation period, the firmware returns the AEM to ship mode and waits before trying again. This policy avoids paying the active harvester current cost during dim or unproductive conditions while still allowing the logger to maintain its battery from ordinary solar exposure.
@@ -37,3 +60,15 @@ P7 — Unavailable/fault. AEM did not respond or could not be configured; retry 
 <img width="1056" height="575" alt="SasquatchDaughter BLEAEM 091726" src="https://github.com/user-attachments/assets/c7620943-6bd2-478b-95a6-c7fd11874fba" />
 
 *Five days of AEM139201 logging data showing the AEM charging state transitions (active harvesting abuot half the time) and battery voltage, which stays within a narrow range despite being located in partial shade where direct sun is available for only a few hours each day*
+
+Any or all of the sensors as well as the AEM13921 and BLE can be enabled via switches at the top of the Arduino EnvironmentalLogger sketch. Enabling BLE on-demand reporting is convenient for checking on the deployed enironmental logger to make sure it is still functioning, and to compare the charging state with the light conditions, and to check the charge of the battery, etc. The BLE NUS service is advertised for a 3-second window every two minutes to conserve power; on-demand BLE uses ~100 uA on average, which is a significant part of the total ~150 uA average current usage of the sensors + Sasquatch. So far, the ~250 uA power usage of the sensors + Sasquatch + on-demand BLE is still low enough that the AEM harvester can keep the battery more or less fully charged indefinitley even with partial, intermittent sun exposure on the solar cell. We use Adafruit's BlueFruit NUS console app on the smartphone to query the device status via BLE:
+
+<temp>C,<humidity>%,<pressure>hPa,<lux>lx,AQI<aqi>,<tvoc>ppb,<eco2>ppm  
+<battery>V,<rsoc>%,<vsto>V,<src1_apm_k>K,<CHG|noCHG>,0x<status0>,P<aem_policy>  
+
+22.4C,58.1%,982.7hPa,1432lx,AQI1,12ppb,421ppm  
+4.01V,0%,4.08V,5230K,CHG,0x82,P3  
+
+*Typical on-demand BLE report available on the smartphone*
+
+
