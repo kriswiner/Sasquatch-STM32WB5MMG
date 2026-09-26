@@ -34,4 +34,4 @@ P7 — Unavailable/fault. AEM did not respond or could not be configured; retry 
 
 <img width="1056" height="575" alt="SasquatchDaughter BLEAEM 091726" src="https://github.com/user-attachments/assets/c7620943-6bd2-478b-95a6-c7fd11874fba" />
 
-*Five days of AEM139201 logging data showing the AEM charging state transitions (active harvesting abur 1/3 of the time) and battery voltage, which stays within a narrow range despite being located in partial shade where direct sun is available for only a few hours each day*
+*Five days of AEM139201 logging data showing the AEM charging state transitions (active harvesting abuot half the time) and battery voltage, which stays within a narrow range despite being located in partial shade where direct sun is available for only a few hours each day*
