@@ -1,0 +1,583 @@
+/*
+ * Sasquatch Daughter robust QSPI log decoder
+ *
+ * Reads the append-only SDLG v1 format, verifies every page and record CRC,
+ * and prints spreadsheet-ready CSV. This sketch never erases or programs QSPI.
+ */
+
+#include <Arduino.h>
+#include <SFLASH.h>
+#include <EEPROM.h>
+
+const uint16_t LOG_PAGE_SIZE = 256;
+const uint8_t LOG_HEADER_SIZE = 32;
+const uint8_t LOG_RECORD_SIZE = 56;
+const uint8_t LOG_RECORDS_PER_PAGE = 4;
+const uint8_t LOG_VERSION = 4;
+const uint8_t LOG_MAGIC[4] = {'S', 'D', 'L', 'G'};
+const uint32_t FAULT_MAGIC = 0x53444654UL; // "SDFT"
+const uint8_t FAULT_VERSION = 1;
+const uint16_t FAULT_EEPROM_ADDRESS = 0;
+const uint32_t HEALTH_MAGIC = 0x5344484CUL; // "SDHL"
+const uint8_t HEALTH_VERSION = 9;
+const uint16_t HEALTH_EEPROM_ADDRESS = 64;
+const uint8_t HEALTH_BREADCRUMB_COUNT = 8;
+const uint8_t LOG_UUID[16] = {
+  0x6E, 0x42, 0xA1, 0x79, 0xCE, 0x51, 0x4B, 0xE8,
+  0x9B, 0x35, 0x71, 0xCC, 0x5D, 0x01, 0x00, 0x01
+};
+
+uint8_t logPage[LOG_PAGE_SIZE];
+
+struct __attribute__((packed)) FaultRecord {
+  uint32_t magic;
+  uint8_t version;
+  uint16_t sequence;
+  uint32_t timestamp;
+  uint8_t code;
+  uint8_t detail0;
+  uint8_t detail1;
+  uint8_t detail2;
+  uint16_t crc;
+};
+
+struct __attribute__((packed)) HealthBreadcrumb {
+  uint32_t timestamp;
+  uint16_t sampleSequence;
+  uint8_t runtimeStep;
+  uint8_t aemPolicy;
+  uint8_t i2cBusState;
+  uint8_t status0;
+};
+
+struct __attribute__((packed)) SystemHealthRecord {
+  uint32_t magic;
+  uint8_t version;
+  uint32_t bootCount;
+  uint16_t watchdogResetCount;
+  uint16_t faultResetCount;
+  uint16_t assertResetCount;
+  uint16_t panicResetCount;
+  uint32_t lastBootTimestamp;
+  uint32_t lastCheckpointTimestamp;
+  uint8_t lastResetCause;
+  uint32_t lastWakeupReason;
+  uint16_t lastSampleSequence;
+  uint8_t lastAEMPolicy;
+  uint8_t lastStatus0;
+  uint8_t lastSetupPhase;
+  uint8_t lastRuntimePhase;
+  uint8_t lastRuntimeStep;
+  uint8_t i2cBusBeforeRecover;
+  uint8_t i2cBusAfterRecover;
+  uint8_t i2cBusLastSeen;
+  uint8_t breadcrumbWriteIndex;
+  uint8_t breadcrumbCount;
+  HealthBreadcrumb breadcrumbs[HEALTH_BREADCRUMB_COUNT];
+  uint16_t crc;
+};
+
+
+/* --------------------------------------------------------------------------
+ * SETUP
+ * -------------------------------------------------------------------------- */
+
+void setup()
+{
+  Serial.begin(115200);
+  while(!Serial) {};
+
+  Serial.println("Sasquatch Daughter QSPI CSV dump");
+  if(!SFLASH.begin()) {
+    Serial.println("ERROR: QSPI begin failed");
+    return;
+  }
+
+  uint8_t manufacturer = 0;
+  uint16_t device = 0;
+  if(!SFLASH.identify(manufacturer, device) || SFLASH.pageSize() != LOG_PAGE_SIZE) {
+    Serial.println("ERROR: unsupported QSPI device or page size");
+    SFLASH.end();
+    return;
+  }
+
+  printCSVHeader();
+  dumpLogPages();
+  SFLASH.end();
+  printEEPROMFaultLog();
+  printEEPROMSystemHealth();
+  Serial.println("# dump_complete");
+}
+
+
+/* --------------------------------------------------------------------------
+ * LOOP
+ * -------------------------------------------------------------------------- */
+
+void loop()
+{
+  // The dump is intentionally performed once in setup().
+}
+
+
+/* --------------------------------------------------------------------------
+ * HELPER FUNCTIONS - little-endian decoding and CRC checks
+ * -------------------------------------------------------------------------- */
+
+uint16_t getU16(const uint8_t *source)
+{
+  return (uint16_t)source[0] | ((uint16_t)source[1] << 8);
+}
+
+
+int16_t getI16(const uint8_t *source)
+{
+  return (int16_t)getU16(source);
+}
+
+
+int32_t getI24(const uint8_t *source)
+{
+  int32_t value = (int32_t)source[0] |
+                  ((int32_t)source[1] << 8) |
+                  ((int32_t)source[2] << 16);
+  if(value & 0x00800000L) value |= 0xFF000000L;
+  return value;
+}
+
+
+uint32_t getU32(const uint8_t *source)
+{
+  return (uint32_t)source[0] | ((uint32_t)source[1] << 8) |
+         ((uint32_t)source[2] << 16) | ((uint32_t)source[3] << 24);
+}
+
+
+uint16_t calculateCRC16(const uint8_t *data, uint16_t length)
+{
+  uint16_t crc = 0xFFFF;
+  while(length--) {
+    crc ^= (uint16_t)(*data++) << 8;
+    for(uint8_t bit = 0; bit < 8; bit++)
+      crc = (crc & 0x8000) ? (uint16_t)((crc << 1) ^ 0x1021) : (uint16_t)(crc << 1);
+  }
+  return crc;
+}
+
+
+uint32_t calculateCRC32(const uint8_t *data, uint16_t length)
+{
+  uint32_t crc = 0xFFFFFFFFUL;
+  while(length--) {
+    crc ^= *data++;
+    for(uint8_t bit = 0; bit < 8; bit++)
+      crc = (crc & 1) ? (crc >> 1) ^ 0xEDB88320UL : crc >> 1;
+  }
+  return ~crc;
+}
+
+
+/* --------------------------------------------------------------------------
+ * HELPER FUNCTIONS - EEPROM fault breadcrumb
+ * -------------------------------------------------------------------------- */
+
+bool faultRecordValid(const FaultRecord &record)
+{
+  if(record.magic != FAULT_MAGIC || record.version != FAULT_VERSION) return false;
+  return record.crc == calculateCRC16((const uint8_t *)&record,
+                                      sizeof(FaultRecord) - sizeof(record.crc));
+}
+
+
+bool systemHealthRecordValid(const SystemHealthRecord &record)
+{
+  if(record.magic != HEALTH_MAGIC || record.version != HEALTH_VERSION) return false;
+  return record.crc == calculateCRC16((const uint8_t *)&record,
+                                      sizeof(SystemHealthRecord) - sizeof(record.crc));
+}
+
+
+const char *faultCodeName(uint8_t code)
+{
+  switch(code) {
+    case 1: return "RTC_INIT";
+    case 2: return "SENSOR_INIT";
+    case 3: return "FLASH_INIT";
+    case 4: return "TIMER_INIT";
+    case 5: return "SAMPLE_REPEATED";
+    case 6: return "FLASH_PROGRAM";
+    case 9: return "WATCHDOG_RESET";
+    case 10: return "FAULT_RESET";
+    case 11: return "ASSERT_RESET";
+    case 12: return "PANIC_RESET";
+    default: return "UNKNOWN";
+  }
+}
+
+
+const char *resetCauseName(uint8_t cause)
+{
+  switch(cause) {
+    case 0: return "HARDWARE";
+    case 1: return "SOFTWARE";
+    case 2: return "WAKEUP";
+    case 3: return "WATCHDOG";
+    case 4: return "FAULT";
+    case 5: return "ASSERT";
+    case 6: return "PANIC";
+    default: return "UNKNOWN";
+  }
+}
+
+
+const char *setupPhaseName(uint8_t phase)
+{
+  switch(phase) {
+    case 0: return "START";
+    case 1: return "GPIO_READY";
+    case 2: return "I2C_READY";
+    case 3: return "RTC_READY";
+    case 4: return "WATCHDOG_RECOVERY";
+    case 5: return "SENSOR_INIT";
+    case 6: return "SENSOR_SKIPPED";
+    case 7: return "FLASH_INIT";
+    case 8: return "AEM_INIT";
+    case 9: return "TIMERS";
+    case 10: return "LOGGING";
+    case 11: return "INIT_FAILED";
+    default: return "UNKNOWN";
+  }
+}
+
+
+const char *runtimePhaseName(uint8_t phase)
+{
+  switch(phase) {
+    case 0: return "BOOT";
+    case 1: return "IDLE";
+    case 2: return "BLE_AIRLOCK";
+    case 3: return "SENSOR_IRQ_SERVICE";
+    case 4: return "MEASURE_START";
+    case 5: return "MEASURE_FINISH";
+    case 8: return "AEM_POLICY";
+    case 9: return "FLASH_SERVICE";
+    case 10: return "WATCHDOG_CHECKPOINT";
+    case 11: return "STATUS_INDICATORS";
+    case 12: return "STOP";
+    default: return "UNKNOWN";
+  }
+}
+
+
+const char *runtimeStepName(uint8_t step)
+{
+  switch(step) {
+    case 0: return "NONE";
+    case 1: return "LOOP_TOP";
+    case 2: return "BLE_SERVICE";
+    case 3: return "IRQ_ENS";
+    case 4: return "IRQ_AEM";
+    case 6: return "MEASURE_START_LPS";
+    case 7: return "MEASURE_START_HDC";
+    case 8: return "MEASURE_START_APDS";
+    case 9: return "HDC_STATUS";
+    case 10: return "HDC_READ";
+    case 11: return "ENS_COMP";
+    case 13: return "LPS_STATUS";
+    case 14: return "LPS_READ";
+    case 15: return "APDS_STATUS";
+    case 16: return "APDS_READ";
+    case 17: return "APDS_DISABLE";
+    case 18: return "ENS_STATUS";
+    case 19: return "ENS_READ";
+    case 23: return "AEM_CONFIG";
+    case 24: return "AEM_POLICY";
+    case 25: return "AEM_IRQ_FLAGS";
+    case 26: return "AEM_IRQ_STATUS";
+    case 27: return "AEM_IRQ_APM";
+    case 28: return "LIS_STATUS";
+    case 29: return "LIS_READ";
+    case 30: return "FLASH_APPEND";
+    case 31: return "FLASH_SERVICE";
+    case 32: return "WATCHDOG_FEED";
+    case 33: return "STOP_ENTER";
+    case 34: return "I2C_RECOVER";
+    default: return "UNKNOWN";
+  }
+}
+
+
+const char *i2cBusStateName(uint8_t state)
+{
+  if((state & 0xFC) != 0) return "UNKNOWN";
+  switch(state & 0x03) {
+    case 0: return "SDA_LOW_SCL_LOW";
+    case 1: return "SDA_HIGH_SCL_LOW";
+    case 2: return "SDA_LOW_SCL_HIGH";
+    case 3: return "SDA_HIGH_SCL_HIGH";
+    default: return "UNKNOWN";
+  }
+}
+
+
+void printI2CBusStateHex(uint8_t state)
+{
+  Serial.print("0x");
+  if(state < 0x10) Serial.print('0');
+  Serial.print(state, HEX);
+}
+
+
+void printHex16(uint16_t value)
+{
+  Serial.print("0x");
+  if(value < 0x1000) Serial.print('0');
+  if(value < 0x0100) Serial.print('0');
+  if(value < 0x0010) Serial.print('0');
+  Serial.print(value, HEX);
+}
+
+
+void printHex8(uint8_t value)
+{
+  Serial.print("0x");
+  if(value < 0x10) Serial.print('0');
+  Serial.print(value, HEX);
+}
+
+
+void printEEPROMFaultLog()
+{
+  FaultRecord record = {};
+  EEPROM.get(FAULT_EEPROM_ADDRESS, record);
+
+  if(!faultRecordValid(record)) {
+    Serial.println("# eeprom_fault_log=None");
+    return;
+  }
+
+  Serial.println("# eeprom_fault_log");
+  Serial.println("# fault_sequence,timestamp_utc,code,name,detail0,detail1,detail2");
+  Serial.print("# ");
+  Serial.print(record.sequence); Serial.print(',');
+  printTimestamp(record.timestamp); Serial.print(',');
+  Serial.print(record.code); Serial.print(',');
+  Serial.print(faultCodeName(record.code)); Serial.print(',');
+  Serial.print("0x"); if(record.detail0 < 0x10) Serial.print('0'); Serial.print(record.detail0, HEX); Serial.print(',');
+  Serial.print("0x"); if(record.detail1 < 0x10) Serial.print('0'); Serial.print(record.detail1, HEX); Serial.print(',');
+  Serial.print("0x"); if(record.detail2 < 0x10) Serial.print('0'); Serial.println(record.detail2, HEX);
+}
+
+
+void printEEPROMSystemHealth()
+{
+  SystemHealthRecord record = {};
+  EEPROM.get(HEALTH_EEPROM_ADDRESS, record);
+
+  if(!systemHealthRecordValid(record)) {
+    Serial.println("# eeprom_system_health=None");
+    return;
+  }
+
+  Serial.println("# eeprom_system_health");
+  Serial.println("# boot_count,last_boot_utc,last_checkpoint_utc,last_setup_phase,last_setup_phase_name,last_runtime_phase,last_runtime_phase_name,last_runtime_step,last_runtime_step_name,i2c_before_recover,i2c_before_recover_name,i2c_after_recover,i2c_after_recover_name,i2c_last_seen,i2c_last_seen_name,last_reset_cause,last_reset_name,last_wakeup_reason,watchdog_resets,fault_resets,assert_resets,panic_resets,last_sample_sequence,last_aem_policy,last_status0");
+  Serial.print("# ");
+  Serial.print(record.bootCount); Serial.print(',');
+  printTimestamp(record.lastBootTimestamp); Serial.print(',');
+  printTimestamp(record.lastCheckpointTimestamp); Serial.print(',');
+  Serial.print(record.lastSetupPhase); Serial.print(',');
+  Serial.print(setupPhaseName(record.lastSetupPhase)); Serial.print(',');
+  Serial.print(record.lastRuntimePhase); Serial.print(',');
+  Serial.print(runtimePhaseName(record.lastRuntimePhase)); Serial.print(',');
+  Serial.print(record.lastRuntimeStep); Serial.print(',');
+  Serial.print(runtimeStepName(record.lastRuntimeStep)); Serial.print(',');
+  printI2CBusStateHex(record.i2cBusBeforeRecover); Serial.print(',');
+  Serial.print(i2cBusStateName(record.i2cBusBeforeRecover)); Serial.print(',');
+  printI2CBusStateHex(record.i2cBusAfterRecover); Serial.print(',');
+  Serial.print(i2cBusStateName(record.i2cBusAfterRecover)); Serial.print(',');
+  printI2CBusStateHex(record.i2cBusLastSeen); Serial.print(',');
+  Serial.print(i2cBusStateName(record.i2cBusLastSeen)); Serial.print(',');
+  Serial.print(record.lastResetCause); Serial.print(',');
+  Serial.print(resetCauseName(record.lastResetCause)); Serial.print(',');
+  Serial.print("0x");
+  for(int8_t shift = 28; shift >= 0; shift -= 4) Serial.print((record.lastWakeupReason >> shift) & 0x0F, HEX);
+  Serial.print(',');
+  Serial.print(record.watchdogResetCount); Serial.print(',');
+  Serial.print(record.faultResetCount); Serial.print(',');
+  Serial.print(record.assertResetCount); Serial.print(',');
+  Serial.print(record.panicResetCount); Serial.print(',');
+  Serial.print(record.lastSampleSequence); Serial.print(',');
+  Serial.print('P'); Serial.print(record.lastAEMPolicy); Serial.print(',');
+  Serial.print("0x"); if(record.lastStatus0 < 0x10) Serial.print('0'); Serial.println(record.lastStatus0, HEX);
+
+  Serial.println("# eeprom_health_breadcrumbs");
+  Serial.println("# index,timestamp_utc,sample_sequence,runtime_step,runtime_step_name,aem_policy,i2c_bus_state,i2c_bus_state_name,status0");
+  uint8_t count = record.breadcrumbCount;
+  if(count > HEALTH_BREADCRUMB_COUNT) count = HEALTH_BREADCRUMB_COUNT;
+  uint8_t start = (record.breadcrumbWriteIndex + HEALTH_BREADCRUMB_COUNT - count) % HEALTH_BREADCRUMB_COUNT;
+  for(uint8_t offset = 0; offset < count; offset++) {
+    uint8_t index = (start + offset) % HEALTH_BREADCRUMB_COUNT;
+    Serial.print("# ");
+    Serial.print(offset); Serial.print(',');
+    printTimestamp(record.breadcrumbs[index].timestamp); Serial.print(',');
+    Serial.print(record.breadcrumbs[index].sampleSequence); Serial.print(',');
+    Serial.print(record.breadcrumbs[index].runtimeStep); Serial.print(',');
+    Serial.print(runtimeStepName(record.breadcrumbs[index].runtimeStep)); Serial.print(',');
+    Serial.print('P'); Serial.print(record.breadcrumbs[index].aemPolicy); Serial.print(',');
+    printI2CBusStateHex(record.breadcrumbs[index].i2cBusState); Serial.print(',');
+    Serial.print(i2cBusStateName(record.breadcrumbs[index].i2cBusState)); Serial.print(',');
+    Serial.print("0x"); if(record.breadcrumbs[index].status0 < 0x10) Serial.print('0'); Serial.println(record.breadcrumbs[index].status0, HEX);
+  }
+}
+
+
+bool pageIsErased()
+{
+  for(uint16_t index = 0; index < LOG_PAGE_SIZE; index++) if(logPage[index] != 0xFF) return false;
+  return true;
+}
+
+
+bool pageIsValid()
+{
+  if(memcmp(logPage, LOG_MAGIC, sizeof(LOG_MAGIC)) != 0 ||
+     logPage[4] != LOG_VERSION || logPage[6] != LOG_RECORD_SIZE ||
+     logPage[7] != LOG_HEADER_SIZE ||
+     memcmp(&logPage[12], LOG_UUID, sizeof(LOG_UUID)) != 0) return false;
+
+  uint32_t storedCRC = getU32(&logPage[28]);
+  uint8_t savedCRC[4];
+  memcpy(savedCRC, &logPage[28], 4);
+  memset(&logPage[28], 0, 4);
+  uint32_t calculatedCRC = calculateCRC32(logPage, sizeof(logPage));
+  memcpy(&logPage[28], savedCRC, 4);
+  return storedCRC == calculatedCRC;
+}
+
+
+/* --------------------------------------------------------------------------
+ * HELPER FUNCTIONS - timestamp and CSV presentation
+ * -------------------------------------------------------------------------- */
+
+bool leapYear(uint16_t year)
+{
+  return (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
+}
+
+
+void printTimestamp(uint32_t y2kSeconds)
+{
+  uint32_t days = y2kSeconds / 86400UL;
+  uint32_t seconds = y2kSeconds % 86400UL;
+  uint16_t year = 2000;
+  while(days >= (uint32_t)(leapYear(year) ? 366 : 365)) {
+    days -= leapYear(year) ? 366 : 365;
+    year++;
+  }
+
+  static const uint8_t monthLength[12] = {31,28,31,30,31,30,31,31,30,31,30,31};
+  uint8_t month = 0;
+  while(month < 12) {
+    uint8_t length = monthLength[month] + ((month == 1 && leapYear(year)) ? 1 : 0);
+    if(days < length) break;
+    days -= length;
+    month++;
+  }
+
+  uint8_t hour = seconds / 3600UL;
+  uint8_t minute = (seconds % 3600UL) / 60UL;
+  uint8_t second = seconds % 60UL;
+  // This US-style order is recognized as a numeric date/time by OpenOffice
+  // Calc scatter plots. The column heading identifies the value as UTC.
+  if(month + 1 < 10) Serial.print('0'); Serial.print(month + 1); Serial.print('/');
+  if(days + 1 < 10) Serial.print('0'); Serial.print(days + 1); Serial.print('/');
+  Serial.print(year); Serial.print(' ');
+  if(hour < 10) Serial.print('0'); Serial.print(hour); Serial.print(':');
+  if(minute < 10) Serial.print('0'); Serial.print(minute); Serial.print(':');
+  if(second < 10) Serial.print('0'); Serial.print(second);
+}
+
+
+void printCSVHeader()
+{
+  Serial.println("# quality_bits: bit0=primary_env_partial, bit1=ens_not_valid, bit2=battery_invalid, bit3=aem_unavailable, bit4=i2c_warning, bit5=flash_warning, bit6=reserved, bit7=reserved");
+  Serial.println("sequence,timestamp_utc,quality,hdc_temp_c,humidity_pct,pressure_hpa,lps_temp_c,ens_aqi,tvoc_ppb,eco2_ppm,"
+                 "red,green,blue,ir,ambient_lux,battery_v,vsto_v,aem_temp_c,aem_apm_src1_k,"
+                 "accel_x_g,accel_y_g,accel_z_g,aem_policy");
+}
+
+
+void printRecord(uint32_t pageNumber, uint32_t pageSequence,
+                 uint8_t recordNumber, const uint8_t *record)
+{
+  (void)pageNumber;
+  (void)pageSequence;
+  (void)recordNumber;
+  Serial.print(getU16(&record[4])); Serial.print(',');
+  uint32_t timestamp = getU32(&record[0]);
+  printTimestamp(timestamp); Serial.print(',');
+  printHex8(record[6]); Serial.print(',');
+  Serial.print(getI16(&record[7]) / 100.0f, 2); Serial.print(',');
+  Serial.print(getU16(&record[9]) / 100.0f, 2); Serial.print(',');
+  Serial.print(getI24(&record[11]) / 4096.0f, 3); Serial.print(',');
+  Serial.print(getI16(&record[14]) / 100.0f, 2); Serial.print(',');
+  Serial.print(record[16]); Serial.print(',');
+  Serial.print(getU16(&record[17])); Serial.print(',');
+  Serial.print(getU16(&record[19])); Serial.print(',');
+  for(uint8_t channel = 0; channel < 4; channel++) {
+    Serial.print(getU16(&record[21 + channel * 2])); Serial.print(',');
+  }
+  Serial.print(getU16(&record[23]) * 2.16f, 2); Serial.print(','); // value for gain1, divide by any other gain, e.g., for gain6 change to 0.360f
+  Serial.print(getU16(&record[29]) / 1000.0f, 3); Serial.print(',');
+  Serial.print(getU16(&record[31]) / 1000.0f, 3); Serial.print(',');
+  if(getI16(&record[33]) == INT16_MIN) Serial.print("nan");
+  else Serial.print(getI16(&record[33]) / 10.0f, 1);
+  Serial.print(',');
+  Serial.print(getU16(&record[35])); Serial.print(',');
+  Serial.print(getI16(&record[37]) * 0.000244f, 4); Serial.print(',');
+  Serial.print(getI16(&record[39]) * 0.000244f, 4); Serial.print(',');
+  Serial.print(getI16(&record[41]) * 0.000244f, 4); Serial.print(',');
+  Serial.println(record[43]);
+}
+
+
+/* --------------------------------------------------------------------------
+ * HELPER FUNCTIONS - sequential QSPI traversal
+ * -------------------------------------------------------------------------- */
+
+void dumpLogPages()
+{
+  uint32_t pageCount = SFLASH.length() / LOG_PAGE_SIZE;
+  uint32_t validRecords = 0;
+
+  for(uint32_t page = 0; page < pageCount; page++) {
+    if(!SFLASH.read(page * LOG_PAGE_SIZE, logPage, sizeof(logPage))) {
+      Serial.print("ERROR: QSPI read failed at page "); Serial.println(page);
+      break;
+    }
+    if(pageIsErased()) break;
+    if(!pageIsValid()) {
+      Serial.print("ERROR: invalid page or CRC at page "); Serial.println(page);
+      break;
+    }
+
+    uint8_t records = logPage[5];
+    if(records > LOG_RECORDS_PER_PAGE) {
+      Serial.print("ERROR: invalid record count at page "); Serial.println(page);
+      break;
+    }
+
+    for(uint8_t index = 0; index < records; index++) {
+      const uint8_t *record = &logPage[LOG_HEADER_SIZE + index * LOG_RECORD_SIZE];
+      if(getU16(&record[54]) != calculateCRC16(record, 54)) {
+        Serial.print("ERROR: record CRC failed at page "); Serial.print(page);
+        Serial.print(", record "); Serial.println(index);
+        continue;
+      }
+      printRecord(page, getU32(&logPage[8]), index, record);
+      validRecords++;
+    }
+  }
+
+  Serial.print("# valid_records="); Serial.println(validRecords);
+}
