@@ -30,6 +30,6 @@ P5 — Light too low. AEM disabled because ambient light is below the policy thr
 P6 — No useful harvest. AEM disabled because source power was insufficient after evaluation.  
 P7 — Unavailable/fault. AEM did not respond or could not be configured; retry later.  
 
-*AEM13921 chargin policy enforced by the STM32WB5 MCU*
+*AEM13921 charging policy enforced by the STM32WB5 MCU*
 
-*<img width="1056" height="575" alt="SasquatchDaughter BLEAEM 091726" src="https://github.com/user-attachments/assets/c7620943-6bd2-478b-95a6-c7fd11874fba" />
+<img width="1056" height="575" alt="SasquatchDaughter BLEAEM 091726" src="https://github.com/user-attachments/assets/c7620943-6bd2-478b-95a6-c7fd11874fba" />
