@@ -11,3 +11,20 @@ The Sasquatch Daughter Board is intended as an update of the [Rodan](https://git
 *Complete Environmental Logger with Daughter board mounted onto the Sasquatch Development board, AM5412 solar cell soldered to the SRC1+/- of the AEM13921, and power being supplied and current measured by the Nordic Power Profiler Kit II.*
 
 The STM32WB5 MCU communicates with all four Daughter board sensors and the ePeas AEM13921 via its external I2C bus. The on-Sasquatch LIS2DW12 accelerometer is on the internal I2C bus. 
+
+The logger treats the sensor array as a set of low-duty-cycle measurement devices rather than continuously powered data streams. On each logging interval, the firmware starts the required one-shot measurements, waits only as long as needed for conversion to complete, reads each sensor in a deterministic sequence over I2C, and then returns devices to their low-power state where supported. Environmental data from the HDC2010 humidity/temperature sensor, LPS22DF pressure sensor, APDS9253 RGB/IR/light sensor, ENS161 gas sensor, and LIS2DW12 accelerometer are collected into a single timestamped record and written to QSPI flash. The code also preserves a compact quality byte for each record so occasional stale or partial readings can be identified without cluttering the primary data log. This approach minimizes average current while still producing complete, synchronized environmental snapshots suitable for long-duration field deployment.
+
+The AEM13921 energy harvester is managed as an explicitly controlled charging subsystem rather than being left continuously active. The firmware normally holds the AEM in its lowest-power disabled/ship state and wakes it only when the battery voltage is below the selected charging threshold and the light sensor indicates useful illumination. After enabling the AEM, the firmware configures it over I2C, monitors the SRC1 available-power measurement and storage voltage, and keeps harvesting active only when the source appears strong enough to provide useful charge. If the battery reaches the upper voltage limit, illumination is too weak, or harvesting does not appear productive after a short evaluation period, the firmware returns the AEM to ship mode and waits before trying again. This policy avoids paying the active harvester current cost during dim or unproductive conditions while still allowing the logger to maintain its battery from ordinary solar exposure.
+
+P0 — AEM off/idle. Battery does not need charging, or policy is waiting.  
+P1 — Wake requested. Conditions look favorable, so the firmware is enabling the AEM.  
+P2 — Evaluating. AEM is awake; firmware is checking whether harvesting is actually useful.  
+P3 — Charging. AEM remains active because source power appears useful.  
+P4 — Storage high. AEM disabled because battery/storage voltage is at the upper limit.  
+P5 — Light too low. AEM disabled because ambient light is below the policy threshold.  
+P6 — No useful harvest. AEM disabled because source power was insufficient after evaluation.  
+P7 — Unavailable/fault. AEM did not respond or could not be configured; retry later.  
+
+*AEM13921 chargin policy enforced by the STM32WB5 MCU*
+
+*<img width="1056" height="575" alt="SasquatchDaughter BLEAEM 091726" src="https://github.com/user-attachments/assets/c7620943-6bd2-478b-95a6-c7fd11874fba" />
