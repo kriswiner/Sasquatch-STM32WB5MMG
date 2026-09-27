@@ -7,6 +7,8 @@ In addition to environmental sensors, the daughter board has an ePeas AEM13921 e
 
 *View of the Sasquatch Daughter board bottom and top from Altium 3D view*
 
+The Sasquatch Daughter board form factor is designed to leave the STM32WB5MMG module and its BLE antenna clear of any interfering metal or PCB material when mounted onto the Sasquatch development board either by soldering onto pin headers or by using matching male/female headers for easy disassembly. The critical environmental sensors, the HDC2010 and LPS22DF, have a large copper stay-out zone to minimize local heating artifacts. The LiPo battery plugs into the on-board connector, and an appropriate solar cell has to be soldered onto the SOL +/- port if energy harvesting is to be used. The charging circuit uses an RTC mounted on the "top" of the daughter PCB (the side opposite the sensors); when the battery is tucked between the Sasquatch development and daughter boards, the battery can be in direct contact with ths RTC and prevent charging when the battery is overheated.
+
 <img width="3014" height="1789" alt="SasquatchEnvLogger" src="https://github.com/user-attachments/assets/bddee9c3-16e7-47b2-9474-25d512cbc7c4" />
 
 *Complete Environmental Logger with Daughter board mounted onto the Sasquatch Development board, AM5412 solar cell soldered to the SRC1+/- of the AEM13921, and power being supplied and current measured by the Nordic Power Profiler Kit II.*
