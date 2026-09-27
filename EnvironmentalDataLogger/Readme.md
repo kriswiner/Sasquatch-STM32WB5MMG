@@ -71,4 +71,8 @@ Any or all of the sensors as well as the AEM13921 and BLE can be enabled via swi
 
 *Typical on-demand BLE report available on the smartphone*
 
+The current firmware intentionally does not use the LC709204F fuel gauge. Battery voltage is measured using the STM32WB internal battery monitor. This simplification resolved the I2C instability seen during earlier prototype testing.
+
+The AEM13921 power behavior is still being characterized; in particular, active harvesting appears to add roughly 300 µA to the system current under some conditions. The present firmware avoids this penalty by explicitly enabling the harvester only when battery voltage and light/source conditions suggest useful charging.
+
 
