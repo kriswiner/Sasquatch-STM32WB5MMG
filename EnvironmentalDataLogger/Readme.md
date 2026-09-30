@@ -62,7 +62,7 @@ P7 — Unavailable/fault. AEM did not respond or could not be configured; retry 
 
 *Five days of AEM13921 logging data showing the AEM charging state transitions (active harvesting about half the time) and battery voltage, which stays within a narrow range despite being located in partial shade where direct sun is available for only a few hours each day*
 
-Any or all of the sensors as well as the AEM13921 and BLE can be enabled via switches at the top of the Arduino Environmental Logger sketch. Enabling BLE on-demand reporting is convenient for checking on the deployed environmental logger to make sure it is still functioning, and to compare the charging state with the light conditions, and to check the charge of the battery, etc. The BLE NUS service is advertised for a 3-second window every two minutes to conserve power; on-demand BLE uses ~100 uA on average, which is a significant part of the total ~150 uA average current usage of the sensors + Sasquatch. So far, the ~250 uA power usage of the sensors + Sasquatch + on-demand BLE is still low enough that the AEM harvester can keep the battery more or less fully charged indefinitely even with partial, intermittent sun exposure on the solar cell. We use Adafruit's BlueFruit NUS console app on the smartphone to query the device status via BLE:
+Any or all of the sensors as well as the AEM13921 and BLE can be enabled via switches at the top of the Arduino Environmental Logger sketch. Enabling BLE on-demand reporting is convenient for checking on the deployed environmental logger to make sure it is still functioning, and to compare the charging state with the light conditions, and to check the charge of the battery, etc. The BLE NUS service is advertised for a 3-second window every two minutes to conserve power; on-demand BLE uses ~100 uA on average, which is a significant part of the total ~150 uA average current usage (dominated by the ENS161) of the sensors + Sasquatch. So far, the ~250 uA power usage of the sensors + Sasquatch + on-demand BLE is still low enough that the AEM harvester can keep the battery more or less fully charged indefinitely even with partial, intermittent sun exposure on the solar cell. We use Adafruit's BlueFruit NUS console app on the smartphone to query the device status via BLE:
 
 <temp>C,<humidity>%,<pressure>hPa,<lux>lx,AQI<aqi>,<tvoc>ppb,<eco2>ppm  
 <battery>V,<rsoc>%,<vsto>V,<src1_apm_k>K,<CHG|noCHG>,0x<status0>,P<aem_policy>  
@@ -72,8 +72,5 @@ Any or all of the sensors as well as the AEM13921 and BLE can be enabled via swi
 
 *Typical on-demand BLE report available on the smartphone*
 
-The current firmware intentionally does not use the LC709204F fuel gauge. Battery voltage is measured using the STM32WB internal battery monitor. This simplification resolved the I2C instability seen during earlier prototype testing.
-
-The AEM13921 power behavior is still being characterized; in particular, active harvesting appears to add roughly 300 µA to the system current under some conditions. The present firmware avoids this penalty by explicitly enabling the harvester only when battery voltage and light/source conditions suggest useful charging.
 
 
