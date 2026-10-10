@@ -76,7 +76,7 @@ The first unattended field test of the Environmental Data Logger with "final" fi
 
 <img width="705" height="406" alt="LongGarden BattVolt" src="https://github.com/user-attachments/assets/b01df144-7c02-4fdf-a0da-5a81229edca7" />
 
-*Battery voltage was rapidly recharged each day up to the 4.05 V voltage cutoff, typically dropping to 3.92-3.95 V before the next charge cycle. The conditions were primarily sunny (at least one overcast day) and the device was located in a tree-shaded location where direct afternoon sun was available for a few hours each day.*
+*Battery voltage was rapidly recharged each day up to the 4.05 V voltage cutoff, typically dropping to 3.92-3.95 V before the next charge cycle. The conditions were primarily sunny (at least one overcast day) and the device was located in a tree-shaded location where direct afternoon sun was available for only a few hours each day.*
 
 <img width="703" height="409" alt="LongGarden LightandSolar" src="https://github.com/user-attachments/assets/c6338f33-4826-47d2-9ab5-a3b872b94c67" />
 
@@ -84,7 +84,7 @@ The first unattended field test of the Environmental Data Logger with "final" fi
 
 <img width="698" height="405" alt="LongGarden RGBIR" src="https://github.com/user-attachments/assets/07476e29-ab58-45ac-ab35-722508ee818c" />
 
-*The RGBIR light envelopes are similar to the total ambient light flux above but there are spikes in the red light and subtle variations between the R, G, B, and IR components that indicate differences in light scattering due to presence of clouds and smoke, etc.*
+*The RGBIR light envelopes are similar to the total ambient light flux above but there are spikes in the red light and subtle variations between the R (red), G (green), B (blue), and IR (pink) components that indicate differences in light scattering due to presence of clouds and smoke, etc.*
 
 <img width="706" height="411" alt="LongGarden HDC2010" src="https://github.com/user-attachments/assets/c1a32ab4-0aff-4bc7-b6f3-31296f12eafc" />
 
@@ -92,8 +92,11 @@ The first unattended field test of the Environmental Data Logger with "final" fi
 
 <img width="700" height="402" alt="LongGarden pressure" src="https://github.com/user-attachments/assets/e6ff2db6-3ec3-499a-99cf-ade92e4bf30a" />
 
-*LPS22DF barometric pressure (hPa or mBar) varied over the 12-day test but in a way hard to correlate with the temperature and humidity.*
+*LPS22DF barometric pressure (hPa or mBar) varied over the 12-day test but in a way hard to correlate with the temperature and humidity, although the pressure does generally rise as the temperatures increase consistent with a high pressure dome.*
 
+<img width="701" height="407" alt="LongGarden gassensor" src="https://github.com/user-attachments/assets/6a1dfd10-ae33-49c2-ba6a-f3e5749ed860" />
+
+*The ENS161 gas sensor shows wide swings of both TVOC and eCO2*
 
 
 
