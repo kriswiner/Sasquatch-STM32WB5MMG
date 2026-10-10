@@ -84,7 +84,7 @@ The first unattended field test of the Environmental Data Logger with "final" fi
 
 <img width="698" height="405" alt="LongGarden RGBIR" src="https://github.com/user-attachments/assets/07476e29-ab58-45ac-ab35-722508ee818c" />
 
-*The RGBIR light envelopes are similar to the total ambient light flux above but there are spikes in the red light and subtle variations between the R (red), G (green), B (blue), and IR (pink) components that indicate differences in light scattering due to presence of clouds and smoke, etc.*
+*The RGBIR light envelopes are similar to the total ambient light flux above but there are spikes in the red light and subtle variations between the R (red), G (green), B (blue), and IR (purple) components that indicate differences in light scattering due to presence of clouds and smoke, etc.*
 
 <img width="706" height="411" alt="LongGarden HDC2010" src="https://github.com/user-attachments/assets/c1a32ab4-0aff-4bc7-b6f3-31296f12eafc" />
 
