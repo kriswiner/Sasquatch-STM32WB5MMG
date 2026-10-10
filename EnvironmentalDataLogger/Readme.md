@@ -80,6 +80,6 @@ The first unattended field test of the Environmental Data Logger with "final" fi
 
 <img width="703" height="409" alt="LongGarden LightandSolar" src="https://github.com/user-attachments/assets/c6338f33-4826-47d2-9ab5-a3b872b94c67" />
 
-*The ambient light output in lux (black) shows seperate morning and afternoon spikes as the sensor is exposed to the rising sun, occluded by the overhead trees, and then exposed to strong reflected light.*
+*The ambient light output in lux (blue) shows various spikes as the APDS9253 sensor is exposed to the rising sun through the overhead trees, and then exposed to strong reflected light in the afternoon. The solar cell provides a strong harvesting signal (> 3000 counts) for most of the day even in partial shade (in the absence of direct sun).*
 
 
