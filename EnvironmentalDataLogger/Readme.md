@@ -96,7 +96,7 @@ The first unattended field test of the Environmental Data Logger with "final" fi
 
 <img width="701" height="407" alt="LongGarden gassensor" src="https://github.com/user-attachments/assets/6a1dfd10-ae33-49c2-ba6a-f3e5749ed860" />
 
-*The ENS161 gas sensor shows wide swings of both TVOC and eCO2*
+*The ENS161 gas sensor shows wide swings of both TVOC (black) and eCO2 (red). But both signals generally diminish with the increasing temperatures.*
 
 
 
