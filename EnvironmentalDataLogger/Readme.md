@@ -82,13 +82,20 @@ The first unattended field test of the Environmental Data Logger with "final" fi
 
 *The ambient light output in lux (blue) shows various spikes as the APDS9253 sensor is exposed to the rising sun through the overhead trees, and then exposed to strong reflected light in the afternoon. The solar cell provides a strong (> 3000 counts) harvesting signal (orange) for most of the day even in the absence of direct sun.*
 
+<img width="698" height="405" alt="LongGarden RGBIR" src="https://github.com/user-attachments/assets/07476e29-ab58-45ac-ab35-722508ee818c" />
+
+*The RGBIR light envelopes are similar to the total ambient light flux above but there are spikes in the red light and subtle variations between the R, G, B, and IR components that indicate differences in light scattering due to presence of clouds and smoke, etc.*
+
 <img width="706" height="411" alt="LongGarden HDC2010" src="https://github.com/user-attachments/assets/c1a32ab4-0aff-4bc7-b6f3-31296f12eafc" />
 
 *HDC2010 temperature (red) shows a multi-day heat wave where peak temperatures reached 40 C during the day. Humidity (black) started out fairly high and dropped significantly with the increasing temperatures.*
 
 <img width="700" height="402" alt="LongGarden pressure" src="https://github.com/user-attachments/assets/e6ff2db6-3ec3-499a-99cf-ade92e4bf30a" />
 
-*LPS22DF barometric pressure varied over the 12-day test but in a way hard to correlate with the temperature and humidity.*
+*LPS22DF barometric pressure (hPa or mBar) varied over the 12-day test but in a way hard to correlate with the temperature and humidity.*
+
+
+
 
 
 
