@@ -94,7 +94,7 @@ The first unattended field test of the Environmental Data Logger with "final" fi
 
 *LPS22DF barometric pressure (hPa or mBar) varied over the 12-day test but in a way hard to correlate with the temperature and humidity, although the pressure does generally rise as the temperatures increase consistent with a high pressure dome.*
 
-<img width="701" height="407" alt="LongGarden gassensor" src="https://github.com/user-attachments/assets/6a1dfd10-ae33-49c2-ba6a-f3e5749ed860" />
+<img width="706" height="411" alt="LongGarden gassensor" src="https://github.com/user-attachments/assets/0950780c-7f07-46de-9196-8040b62b2741" />
 
 *The ENS161 gas sensor shows wide swings of both TVOC (black) and eCO2 (red). But both signals generally diminish with the increasing temperatures and decreasing humidity.*
 
