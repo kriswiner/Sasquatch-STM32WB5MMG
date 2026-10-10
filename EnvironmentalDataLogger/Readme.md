@@ -76,5 +76,10 @@ The first unattended field test of the Environmental Data Logger with "final" fi
 
 <img width="705" height="406" alt="LongGarden BattVolt" src="https://github.com/user-attachments/assets/b01df144-7c02-4fdf-a0da-5a81229edca7" />
 
-*Battery voltage was recharged each day up to the 4.05 V voltage cutoff, typically dropping to 3.95 V before the next charge cycle.*
+*Battery voltage was rapidly recharged each day up to the 4.05 V voltage cutoff, typically dropping to 3.92-3.95 V before the next charge cycle. The conditions were primarily sunny (at least one overcast day) and the device was located in a tree-shaded location where direct afternoon sun was available for a few hours each day.*
+
+<img width="703" height="409" alt="LongGarden LightandSolar" src="https://github.com/user-attachments/assets/c6338f33-4826-47d2-9ab5-a3b872b94c67" />
+
+*The ambient light output in lux (black) shows seperate morning and afternoon spikes as the sensor is exposed to the rising sun, occluded by the overhead trees, and then exposed to strong reflected light.*
+
 
