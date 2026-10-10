@@ -84,7 +84,12 @@ The first unattended field test of the Environmental Data Logger with "final" fi
 
 <img width="706" height="411" alt="LongGarden HDC2010" src="https://github.com/user-attachments/assets/c1a32ab4-0aff-4bc7-b6f3-31296f12eafc" />
 
-*HDC2010 temperature shows a multi-day heat wave where peak temperatres reached 40 C during the day. Humidity started out fairly high and dropped significantly with the increasing temperatures.*
+*HDC2010 temperature (red) shows a multi-day heat wave where peak temperatures reached 40 C during the day. Humidity (black) started out fairly high and dropped significantly with the increasing temperatures.*
+
+<img width="700" height="402" alt="LongGarden pressure" src="https://github.com/user-attachments/assets/e6ff2db6-3ec3-499a-99cf-ade92e4bf30a" />
+
+*LPS22DF barometric pressure varied over the 12-day test but in a way hard to correlate with the temperature and humidity.*
+
 
 
 
