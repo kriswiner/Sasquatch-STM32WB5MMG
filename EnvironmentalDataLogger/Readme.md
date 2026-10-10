@@ -80,6 +80,11 @@ The first unattended field test of the Environmental Data Logger with "final" fi
 
 <img width="703" height="409" alt="LongGarden LightandSolar" src="https://github.com/user-attachments/assets/c6338f33-4826-47d2-9ab5-a3b872b94c67" />
 
-*The ambient light output in lux (blue) shows various spikes as the APDS9253 sensor is exposed to the rising sun through the overhead trees, and then exposed to strong reflected light in the afternoon. The solar cell provides a strong (> 3000 counts) harvesting signal (red) for most of the day even in partial shade (in the absence of direct sun).*
+*The ambient light output in lux (blue) shows various spikes as the APDS9253 sensor is exposed to the rising sun through the overhead trees, and then exposed to strong reflected light in the afternoon. The solar cell provides a strong (> 3000 counts) harvesting signal (orange) for most of the day even in the absence of direct sun.*
+
+<img width="706" height="411" alt="LongGarden HDC2010" src="https://github.com/user-attachments/assets/c1a32ab4-0aff-4bc7-b6f3-31296f12eafc" />
+
+*HDC2010 temperature shows a multi-day heat wave where peak temperatres reached 40 C during the day. Humidity started out fairly high and dropped significantly with the increasing temperatures.*
+
 
 
