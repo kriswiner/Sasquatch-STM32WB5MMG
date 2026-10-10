@@ -72,7 +72,9 @@ Any or all of the sensors as well as the AEM13921 and BLE can be enabled via swi
 
 *Typical on-demand BLE report available on the smartphone*
 
-We are currently performing multi-day trials of the Environmental Logger in preparation for the next step: multi month deployment. We will post typical time series of collected data as it becomes available.
+The first unattended field test of the Environmental Data Logger with "final" firmware was deployed starting 9:23 am on 9/26/26 and recovered at ~11 am on 10/09/26 for a total of just over 12 days in service. The data was output to the serial monitor using the LogDump sketch and copied into an Open Office spreadsheet where the folliwing time seris plots were created:
 
+<img width="705" height="406" alt="LongGarden BattVolt" src="https://github.com/user-attachments/assets/b01df144-7c02-4fdf-a0da-5a81229edca7" />
 
+*Battery voltage was recharged each day up to the 4.05 V voltage cutoff, typically dropping to 3.95 V before the next charge cycle.*
 
